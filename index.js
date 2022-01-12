@@ -1,24 +1,29 @@
-import DiscordJS, { Intents } from 'discord.js'
-import dotenv from 'dotenv'
+const { Client, Collection, Intents } = require('discord.js');
+const dotenv = require('dotenv');
+const fs = require('fs');
+
 dotenv.config()
 
-const fs = require('fs');
-const { Client, Collection, Intents } = require('discord.js');
-
-const client = new DiscordJS.Client({
+const client = new Client({
     intents: [ 
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_MESSAGES
     ]
 })
 
-client.once("Ready", () => {
-    console.log("Bot's ready :D")
+client.once("ready", () => {
+    console.log("Ready! :D")
 })
 
-client.on("messageCreate", (message) => {
-    // example onmessage event
-})
+client.on('interactionCreate', async interaction => {
+	if (!interaction.isCommand()) return;
+
+	const { commandName } = interaction;
+
+	if (commandName === 'ping') {
+		await interaction.reply('Pong!');
+	}
+});
 
 client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
